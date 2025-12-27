@@ -247,6 +247,9 @@ class SoundCloudDownloader {
     }
 
     async monitorDownload(downloadId, options) {
+        let retryCount = 0;
+        const maxRetries = 180; // 3 minutos máximo (180 * 1 segundo)
+
         const checkStatus = async () => {
             try {
                 const response = await fetch(`/api/status/${downloadId}`);
@@ -265,7 +268,10 @@ class SoundCloudDownloader {
                 if (status.status === 'starting') {
                     this.elements.progressText.textContent = 'Preparando download...';
                 } else if (status.status === 'downloading') {
-                    this.elements.progressText.textContent = `Baixando... ${Math.round(status.progress)}%`;
+                    const progressText = status.current_track
+                        ? `Baixando: ${status.current_track}`
+                        : `Baixando... ${Math.round(status.progress)}%`;
+                    this.elements.progressText.textContent = progressText;
                 } else if (status.status === 'completed') {
                     // Download completo!
                     this.elements.progressFill.style.width = '100%';
@@ -280,12 +286,28 @@ class SoundCloudDownloader {
                     throw new Error(status.error || 'Download falhou');
                 }
 
+                // Incrementar contador de tentativas
+                retryCount++;
+
+                // Verificar timeout máximo
+                if (retryCount >= maxRetries) {
+                    throw new Error('Tempo limite excedido. Tente novamente.');
+                }
+
                 // Continuar verificando
                 if (this.currentDownloadId === downloadId) {
                     setTimeout(checkStatus, 1000);
                 }
 
             } catch (error) {
+                // Se for erro de rede, tentar novamente algumas vezes
+                if (error.name === 'TypeError' && retryCount < maxRetries) {
+                    retryCount++;
+                    console.log('Erro de rede, tentando novamente...', retryCount);
+                    setTimeout(checkStatus, 2000);
+                    return;
+                }
+
                 this.elements.progressModal.style.display = 'none';
                 this.elements.loading.style.display = 'none';
                 this.elements.downloadBtn.disabled = false;
