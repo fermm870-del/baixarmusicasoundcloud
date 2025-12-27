@@ -118,6 +118,15 @@ class DownloadManager:
             else:
                 output_template = str(download_path / "%(title)s.%(ext)s")
             
+            def postprocessor_hook(d):
+                """Hook para detectar quando pós-processamento termina"""
+                try:
+                    if d['status'] == 'finished':
+                        active_downloads[download_id]["current_track"] = "Conversão completa!"
+                        print(f"[{download_id}] Pós-processamento concluído: {d.get('info_dict', {}).get('title', 'arquivo')}")
+                except Exception as e:
+                    print(f"Erro no postprocessor_hook: {e}")
+            
             ydl_opts = {
                 'format': 'bestaudio/best',
                 'outtmpl': output_template,
@@ -127,17 +136,15 @@ class DownloadManager:
                     'preferredquality': quality if quality != 'best' else '0',
                 }],
                 'progress_hooks': [progress_hook],
+                'postprocessor_hooks': [postprocessor_hook],
                 'noplaylist': mode != 'playlist',
                 'ignoreerrors': True,
                 'no_warnings': False,
                 'quiet': False,
                 'nocheckcertificate': True,
-                'writethumbnail': True,
-                'embedthumbnail': True,
+                'writethumbnail': False,  # Desabilitar thumbnail para evitar erros
+                'embedthumbnail': False,
                 'addmetadata': True,
-                'postprocessor_args': {
-                    'embedthumbnail+ffmpeg': ['-c:v', 'mjpeg']
-                }
             }
             
             # Log das opções
@@ -149,28 +156,38 @@ class DownloadManager:
                 f.write(f"Output: {output_template}\n")
                 f.write("-" * 50 + "\n")
             
+            print(f"[{download_id}] Iniciando download de: {url}")
+            
             # Executar download
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 # Tentar baixar
                 result = ydl.download([url])
                 
-                # Verificar resultado
-                if result == 0:
+                print(f"[{download_id}] Download retornou código: {result}")
+                
+                # Aguardar um pouco para garantir que arquivos foram escritos
+                import time
+                time.sleep(1)
+                
+                # Listar arquivos baixados (sempre verificar, independente do código de retorno)
+                files = []
+                print(f"[{download_id}] Buscando arquivos em: {download_path}")
+                for ext in ["mp3", "m4a", "opus", "flac", "wav", "ogg"]:
+                    for file in download_path.rglob(f"*.{ext}"):
+                        if file.is_file():
+                            print(f"[{download_id}] Arquivo encontrado: {file.name}")
+                            files.append({
+                                "name": file.name,
+                                "size": file.stat().st_size,
+                                "path": str(file.relative_to(DOWNLOAD_DIR))
+                            })
+                
+                # Se encontrou arquivos, marcar como completo
+                if files:
                     active_downloads[download_id]["status"] = "completed"
                     active_downloads[download_id]["progress"] = 100
-                    
-                    # Listar arquivos baixados
-                    files = []
-                    for ext in ["mp3", "m4a", "opus", "flac", "wav", "ogg"]:
-                        for file in download_path.rglob(f"*.{ext}"):
-                            if file.is_file():
-                                files.append({
-                                    "name": file.name,
-                                    "size": file.stat().st_size,
-                                    "path": str(file.relative_to(DOWNLOAD_DIR))
-                                })
-                    
                     active_downloads[download_id]["files"] = files
+                    print(f"[{download_id}] Download COMPLETO! {len(files)} arquivo(s)")
                     
                     # Adicionar ao log
                     with open(log_file, "a", encoding="utf-8") as f:
@@ -179,25 +196,10 @@ class DownloadManager:
                         for file in files:
                             f.write(f"  - {file['name']} ({file['size']} bytes)\n")
                 else:
-                    # Verificar se algum arquivo foi baixado mesmo com erros
-                    files = []
-                    for ext in ["mp3", "m4a", "opus", "flac", "wav", "ogg"]:
-                        for file in download_path.rglob(f"*.{ext}"):
-                            if file.is_file():
-                                files.append({
-                                    "name": file.name,
-                                    "size": file.stat().st_size,
-                                    "path": str(file.relative_to(DOWNLOAD_DIR))
-                                })
-                    
-                    if files:
-                        # Parcialmente bem-sucedido
-                        active_downloads[download_id]["status"] = "completed"
-                        active_downloads[download_id]["progress"] = 100
-                        active_downloads[download_id]["files"] = files
-                    else:
-                        active_downloads[download_id]["status"] = "failed"
-                        active_downloads[download_id]["error"] = "Não foi possível baixar o áudio. Verifique se o link está correto."
+                    # Nenhum arquivo encontrado
+                    print(f"[{download_id}] FALHA - Nenhum arquivo encontrado")
+                    active_downloads[download_id]["status"] = "failed"
+                    active_downloads[download_id]["error"] = "Não foi possível baixar o áudio. Verifique se o link está correto."
                         
         except yt_dlp.utils.DownloadError as e:
             error_msg = str(e)
