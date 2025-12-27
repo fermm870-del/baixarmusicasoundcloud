@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoundCloud Downloader</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-cloud-download-alt"></i> SoundCloud Downloader</h1>
+            <p class="subtitle">Baixe músicas e playlists do SoundCloud gratuitamente</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Seletor de Tipo de Download -->
+            <div class="mode-selector">
+                <button id="singleModeBtn" class="mode-btn active">
+                    <i class="fas fa-music"></i> Música Única
+                </button>
+                <button id="playlistModeBtn" class="mode-btn">
+                    <i class="fas fa-list"></i> Playlist Completa
+                </button>
+            </div>
+
+            <!-- Formulário de Download -->
+            <div class="download-form">
+                <!-- Input para URL -->
+                <div class="input-group">
+                    <label for="urlInput">
+                        <i class="fas fa-link"></i> Cole o link do SoundCloud:
+                    </label>
+                    <div class="input-with-icon">
+                        <input type="text" id="urlInput" 
+                               placeholder="Ex: https://soundcloud.com/artista/nome-da-musica">
+                        <button id="pasteBtn" class="icon-btn" title="Colar">
+                            <i class="fas fa-paste"></i>
+                        </button>
+                    </div>
+                    <small class="help-text" id="urlHelp">
+                        Para playlists: link deve conter "/sets/" na URL
+                    </small>
+                </div>
+
+                <!-- Opções de Formato (visível apenas para música única) -->
+                <div class="options-group" id="formatOptions">
+                    <label for="formatSelect">
+                        <i class="fas fa-file-audio"></i> Formato:
+                    </label>
+                    <select id="formatSelect">
+                        <option value="mp3">MP3 (Recomendado)</option>
+                        <option value="m4a">M4A/AAC</option>
+                        <option value="opus">Opus</option>
+                        <option value="flac">FLAC (Alta Qualidade)</option>
+                    </select>
+                </div>
+
+                <!-- Opções de Qualidade -->
+                <div class="options-group">
+                    <label for="qualitySelect">
+                        <i class="fas fa-volume-up"></i> Qualidade:
+                    </label>
+                    <select id="qualitySelect">
+                        <option value="128">128 kbps</option>
+                        <option value="192" selected>192 kbps</option>
+                        <option value="320">320 kbps (Melhor)</option>
+                        <option value="best">Melhor Disponível</option>
+                    </select>
+                </div>
+
+                <!-- Opções Adicionais para Playlist -->
+                <div class="options-group" id="playlistOptions" style="display: none;">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="createFolder" checked>
+                        <label for="createFolder">Criar pasta com nome da playlist</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="numberTracks" checked>
+                        <label for="numberTracks">Numerar faixas (01, 02, 03...)</label>
+                    </div>
+                    <div class="range-group">
+                        <label for="limitTracks">
+                            <i class="fas fa-filter"></i> Limitar faixas (0 = todas):
+                        </label>
+                        <input type="range" id="limitTracks" min="0" max="50" value="0">
+                        <span id="trackCount">Todas</span>
+                    </div>
+                </div>
+
+                <!-- Botão de Download -->
+                <div class="action-group">
+                    <button id="downloadBtn" class="download-btn">
+                        <i class="fas fa-download"></i> 
+                        <span id="downloadText">Baixar Música</span>
+                    </button>
+                    <div class="loading" id="loading" style="display: none;">
+                        <div class="spinner"></div>
+                        <span>Processando...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Informações da Música/Playlist -->
+            <div class="info-card" id="infoCard" style="display: none;">
+                <h3><i class="fas fa-info-circle"></i> Informações</h3>
+                <div id="trackInfo">
+                    <!-- Preenchido dinamicamente -->
+                </div>
+            </div>
+
+            <!-- Histórico de Downloads -->
+            <div class="history-section">
+                <h3><i class="fas fa-history"></i> Downloads Recentes</h3>
+                <div class="history-list" id="historyList">
+                    <!-- Preenchido dinamicamente -->
+                </div>
+            </div>
+
+            <!-- Avisos Legais -->
+            <div class="legal-notice">
+                <h4><i class="fas fa-exclamation-triangle"></i> Aviso Legal</h4>
+                <p>
+                    Este serviço é apenas para baixar conteúdo que você tem permissão para baixar.
+                    Respeite os direitos autorais dos artistas. Apenas faça download de músicas
+                    que são oferecidas gratuitamente ou que você possui os direitos.
+                </p>
+            </div>
+        </div>
+
+        <footer>
+            <p>SoundCloud Downloader &copy; 2025 - Use com responsabilidade</p>
+        </footer>
+    </div>
+
+    <!-- Modal de Progresso -->
+    <div class="modal" id="progressModal" style="display: none;">
+        <div class="modal-content">
+            <h3><i class="fas fa-sync-alt fa-spin"></i> Download em Andamento</h3>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <p id="progressText">Preparando download...</p>
+            <div class="progress-details" id="progressDetails">
+                <!-- Detalhes do progresso -->
+            </div>
+            <button id="cancelBtn" class="cancel-btn">Cancelar</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
