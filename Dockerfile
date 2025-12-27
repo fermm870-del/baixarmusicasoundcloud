@@ -21,5 +21,5 @@ RUN mkdir -p downloads
 # Porta
 EXPOSE 5000
 
-# Iniciar com gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "--timeout", "300", "server:app"]
+# Iniciar com gunicorn (1 worker para manter estado em memória + threads para concorrência)
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "1", "--threads", "4", "--timeout", "600", "server:app"]
