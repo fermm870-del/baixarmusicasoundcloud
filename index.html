@@ -3,151 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SoundCloud Downloader</title>
+    <title>Hotel Paraíso - Uma estadia inesquecível</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1><i class="fas fa-cloud-download-alt"></i> SoundCloud Downloader</h1>
-            <p class="subtitle">Baixe músicas e playlists do SoundCloud gratuitamente</p>
-        </header>
-
-        <div class="main-content">
-            <!-- Seletor de Tipo de Download -->
-            <div class="mode-selector">
-                <button id="singleModeBtn" class="mode-btn active">
-                    <i class="fas fa-music"></i> Música Única
-                </button>
-                <button id="playlistModeBtn" class="mode-btn">
-                    <i class="fas fa-list"></i> Playlist Completa
-                </button>
+    <header id="header">
+        <div class="container header-container">
+            <div class="logo">
+                <a href="#home"><h1>Hotel Paraíso</h1></a>
             </div>
+            <nav class="nav-menu" id="nav-menu">
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#sobre">Sobre Nós</a></li>
+                    <li><a href="#acomodacoes">Acomodações</a></li>
+                    <li><a href="#servicos">Serviços</a></li>
+                    <li><a href="#contato">Contato</a></li>
+                </ul>
+            </nav>
+            <div class="mobile-toggle" id="mobile-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <a href="#reserva" class="btn btn-primary reserva-btn">Reservar Agora</a>
+        </div>
+    </header>
 
-            <!-- Formulário de Download -->
-            <div class="download-form">
-                <!-- Input para URL -->
-                <div class="input-group">
-                    <label for="urlInput">
-                        <i class="fas fa-link"></i> Cole o link do SoundCloud:
-                    </label>
-                    <div class="input-with-icon">
-                        <input type="text" id="urlInput" 
-                               placeholder="Ex: https://soundcloud.com/artista/nome-da-musica">
-                        <button id="pasteBtn" class="icon-btn" title="Colar">
-                            <i class="fas fa-paste"></i>
-                        </button>
-                    </div>
-                    <small class="help-text" id="urlHelp">
-                        Para playlists: link deve conter "/sets/" na URL
-                    </small>
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-overlay"></div>
+            <div class="hero-content container">
+                <h2>Bem-vindo ao seu refúgio perfeito</h2>
+                <p>Experimente o conforto e a elegância no coração da natureza. O Hotel Paraíso oferece uma experiência única de relaxamento e sofisticação.</p>
+                <a href="#acomodacoes" class="btn btn-primary btn-large">Descubra Nossos Quartos</a>
+            </div>
+        </section>
+
+        <section id="sobre" class="section">
+            <div class="container about-container">
+                <div class="about-text">
+                    <h2 class="section-title">Sobre Nós</h2>
+                    <p>Fundado com o objetivo de proporcionar uma experiência inigualável de hospitalidade, o Hotel Paraíso combina o charme rústico com instalações modernas de luxo.</p>
+                    <p>Nossa equipe dedicada está comprometida em tornar sua estadia memorável, oferecendo serviço personalizado e atenção aos mínimos detalhes.</p>
+                    <ul class="features-list">
+                        <li><i class="fas fa-check"></i> Localização privilegiada</li>
+                        <li><i class="fas fa-check"></i> Atendimento 24 horas</li>
+                        <li><i class="fas fa-check"></i> Ambiente familiar e acolhedor</li>
+                    </ul>
                 </div>
-
-                <!-- Opções de Formato (visível apenas para música única) -->
-                <div class="options-group" id="formatOptions">
-                    <label for="formatSelect">
-                        <i class="fas fa-file-audio"></i> Formato:
-                    </label>
-                    <select id="formatSelect">
-                        <option value="mp3">MP3 (Recomendado)</option>
-                        <option value="m4a">M4A/AAC</option>
-                        <option value="opus">Opus</option>
-                        <option value="flac">FLAC (Alta Qualidade)</option>
-                    </select>
-                </div>
-
-                <!-- Opções de Qualidade -->
-                <div class="options-group">
-                    <label for="qualitySelect">
-                        <i class="fas fa-volume-up"></i> Qualidade:
-                    </label>
-                    <select id="qualitySelect">
-                        <option value="128">128 kbps</option>
-                        <option value="192" selected>192 kbps</option>
-                        <option value="320">320 kbps (Melhor)</option>
-                        <option value="best">Melhor Disponível</option>
-                    </select>
-                </div>
-
-                <!-- Opções Adicionais para Playlist -->
-                <div class="options-group" id="playlistOptions" style="display: none;">
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="createFolder" checked>
-                        <label for="createFolder">Criar pasta com nome da playlist</label>
-                    </div>
-                    <div class="checkbox-group">
-                        <input type="checkbox" id="numberTracks" checked>
-                        <label for="numberTracks">Numerar faixas (01, 02, 03...)</label>
-                    </div>
-                    <div class="range-group">
-                        <label for="limitTracks">
-                            <i class="fas fa-filter"></i> Limitar faixas (0 = todas):
-                        </label>
-                        <input type="range" id="limitTracks" min="0" max="50" value="0">
-                        <span id="trackCount">Todas</span>
-                    </div>
-                </div>
-
-                <!-- Botão de Download -->
-                <div class="action-group">
-                    <button id="downloadBtn" class="download-btn">
-                        <i class="fas fa-download"></i> 
-                        <span id="downloadText">Baixar Música</span>
-                    </button>
-                    <div class="loading" id="loading" style="display: none;">
-                        <div class="spinner"></div>
-                        <span>Processando...</span>
-                    </div>
+                <div class="about-image">
+                    <img src="https://images.unsplash.com/photo-1542314831-c6a4d27ce66b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Vista do Hotel">
                 </div>
             </div>
+        </section>
 
-            <!-- Informações da Música/Playlist -->
-            <div class="info-card" id="infoCard" style="display: none;">
-                <h3><i class="fas fa-info-circle"></i> Informações</h3>
-                <div id="trackInfo">
-                    <!-- Preenchido dinamicamente -->
+        <section id="acomodacoes" class="section bg-light">
+            <div class="container">
+                <div class="section-header text-center">
+                    <h2 class="section-title">Nossas Acomodações</h2>
+                    <p>Quartos projetados para o seu máximo conforto e relaxamento.</p>
+                </div>
+
+                <div class="rooms-grid">
+                    <div class="room-card">
+                        <div class="room-image">
+                            <img src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Quarto Standard">
+                        </div>
+                        <div class="room-info">
+                            <h3>Quarto Standard</h3>
+                            <p>Ideal para casais, oferecendo conforto e uma bela vista para o jardim interno do hotel.</p>
+                            <div class="room-amenities">
+                                <span><i class="fas fa-wifi"></i> Wi-Fi</span>
+                                <span><i class="fas fa-tv"></i> TV Smart</span>
+                                <span><i class="fas fa-snowflake"></i> Ar-condicionado</span>
+                            </div>
+                            <div class="room-footer">
+                                <span class="price">A partir de R$ 350 / noite</span>
+                                <a href="#reserva" class="btn btn-outline">Reservar</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="room-card">
+                        <div class="room-image">
+                            <img src="https://images.unsplash.com/photo-1582719478250-c894e4dc24a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Suíte Luxo">
+                        </div>
+                        <div class="room-info">
+                            <h3>Suíte Luxo</h3>
+                            <p>Espaçosa e elegante, com varanda privativa e vista panorâmica para o mar.</p>
+                            <div class="room-amenities">
+                                <span><i class="fas fa-wifi"></i> Wi-Fi</span>
+                                <span><i class="fas fa-hot-tub"></i> Hidromassagem</span>
+                                <span><i class="fas fa-concierge-bell"></i> Room Service</span>
+                            </div>
+                            <div class="room-footer">
+                                <span class="price">A partir de R$ 680 / noite</span>
+                                <a href="#reserva" class="btn btn-outline">Reservar</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="room-card">
+                        <div class="room-image">
+                            <img src="https://images.unsplash.com/photo-1578683010236-d716f9a3f461?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Quarto Familiar">
+                        </div>
+                        <div class="room-info">
+                            <h3>Quarto Familiar</h3>
+                            <p>Perfeito para viagens em família, com dois quartos conectados e amplo espaço.</p>
+                            <div class="room-amenities">
+                                <span><i class="fas fa-wifi"></i> Wi-Fi</span>
+                                <span><i class="fas fa-gamepad"></i> Sala de TV</span>
+                                <span><i class="fas fa-baby-carriage"></i> Berço (opcional)</span>
+                            </div>
+                            <div class="room-footer">
+                                <span class="price">A partir de R$ 520 / noite</span>
+                                <a href="#reserva" class="btn btn-outline">Reservar</a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <!-- Histórico de Downloads -->
-            <div class="history-section">
-                <h3><i class="fas fa-history"></i> Downloads Recentes</h3>
-                <div class="history-list" id="historyList">
-                    <!-- Preenchido dinamicamente -->
+        <section id="servicos" class="section">
+            <div class="container">
+                <div class="section-header text-center">
+                    <h2 class="section-title">Nossos Serviços</h2>
+                    <p>Desfrute de comodidades exclusivas durante a sua estadia.</p>
+                </div>
+
+                <div class="services-grid">
+                    <div class="service-card text-center">
+                        <div class="service-icon">
+                            <i class="fas fa-swimming-pool"></i>
+                        </div>
+                        <h3>Piscina Infinita</h3>
+                        <p>Relaxe em nossa piscina aquecida com borda infinita e vista deslumbrante.</p>
+                    </div>
+
+                    <div class="service-card text-center">
+                        <div class="service-icon">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                        <h3>Restaurante Gourmet</h3>
+                        <p>Saboreie pratos deliciosos preparados por nossos chefs premiados.</p>
+                    </div>
+
+                    <div class="service-card text-center">
+                        <div class="service-icon">
+                            <i class="fas fa-spa"></i>
+                        </div>
+                        <h3>Spa & Bem-estar</h3>
+                        <p>Renove as energias com nossos tratamentos relaxantes e massagens.</p>
+                    </div>
+
+                    <div class="service-card text-center">
+                        <div class="service-icon">
+                            <i class="fas fa-dumbbell"></i>
+                        </div>
+                        <h3>Academia</h3>
+                        <p>Mantenha sua rotina de exercícios em nossa academia moderna e equipada.</p>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <!-- Avisos Legais -->
-            <div class="legal-notice">
-                <h4><i class="fas fa-exclamation-triangle"></i> Aviso Legal</h4>
-                <p>
-                    Este serviço é apenas para baixar conteúdo que você tem permissão para baixar.
-                    Respeite os direitos autorais dos artistas. Apenas faça download de músicas
-                    que são oferecidas gratuitamente ou que você possui os direitos.
-                </p>
+        <section id="contato" class="section bg-dark text-white">
+            <div class="container contact-container">
+                <div class="contact-info">
+                    <h2 class="section-title" style="color: white;">Entre em Contato</h2>
+                    <p>Estamos à disposição para esclarecer suas dúvidas e auxiliar em sua reserva.</p>
+
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Av. das Palmeiras, 1234 - Paraíso, Litoral - SC</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>+55 (47) 3333-0000</span>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>reservas@hotelparaiso.com.br</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-form">
+                    <form action="#" method="POST" id="form-contato">
+                        <div class="form-group">
+                            <input type="text" placeholder="Seu Nome" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" placeholder="Seu E-mail" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" placeholder="Assunto" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea rows="4" placeholder="Sua Mensagem" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Enviar Mensagem</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-logo">
+                <h2>Hotel Paraíso</h2>
+                <p>O seu refúgio de paz e conforto.</p>
+            </div>
+            <div class="footer-social">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Hotel Paraíso. Todos os direitos reservados.</p>
             </div>
         </div>
-
-        <footer>
-            <p>SoundCloud Downloader &copy; 2025 - Use com responsabilidade</p>
-        </footer>
-    </div>
-
-    <!-- Modal de Progresso -->
-    <div class="modal" id="progressModal" style="display: none;">
-        <div class="modal-content">
-            <h3><i class="fas fa-sync-alt fa-spin"></i> Download em Andamento</h3>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <p id="progressText">Preparando download...</p>
-            <div class="progress-details" id="progressDetails">
-                <!-- Detalhes do progresso -->
-            </div>
-            <button id="cancelBtn" class="cancel-btn">Cancelar</button>
-        </div>
-    </div>
+    </footer>
 
     <script src="script.js"></script>
 </body>
